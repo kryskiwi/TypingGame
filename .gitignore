@@ -1,6 +1,8 @@
 build/**
 build/
 
-**/build
+.gradle
+
+bin/
 
 .vscode/

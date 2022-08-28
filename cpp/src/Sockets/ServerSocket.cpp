@@ -43,9 +43,10 @@ void ServerSocket::BindAndListen(Endpoint endpoint)
 SendReceiveSocket ServerSocket::Accept()
 {
     SOCKET connectedSocket = accept(listenerSocket, nullptr, nullptr);
-    if (connectedSocket = INVALID_SOCKET)
+    if (connectedSocket == INVALID_SOCKET)
     {
         std::cout << "Socket failed to accept " << WSAGetLastError() << "\n";
+
         closesocket(listenerSocket);
         WSACleanup();
         exit(1);
