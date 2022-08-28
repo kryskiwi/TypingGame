@@ -7,7 +7,7 @@ class Endpoint
 {
 public:
     std::string ipAddress;
-    uint8_t portNumber;
+    uint16_t portNumber;
 };
 
 #endif
