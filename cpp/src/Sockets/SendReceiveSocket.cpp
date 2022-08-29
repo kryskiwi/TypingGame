@@ -46,3 +46,8 @@ std::vector<uint8_t> SendReceiveSocket::ReceiveData(size_t numberOfBytes)
     
     return readData;
 }
+
+SendReceiveSocket::~SendReceiveSocket()
+{
+    closesocket(connectedSocket);
+}

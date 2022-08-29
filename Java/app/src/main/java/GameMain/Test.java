@@ -12,6 +12,7 @@ public class Test {
             OutputStream out = sock.getOutputStream();
             PrintWriter pw = new PrintWriter(out, true);
             pw.println("Java app");
+            sock.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

@@ -12,6 +12,7 @@ public:
     SendReceiveSocket(SOCKET acceptedSocket);
     std::vector<uint8_t> ReceiveData(size_t numberOfBytes);
     void SendData(const std::vector<uint8_t>& dataBytesToSend);
+    ~SendReceiveSocket();
 
 private:
     static constexpr size_t SOCKET_BUFFER_LENGTH = 1024;
