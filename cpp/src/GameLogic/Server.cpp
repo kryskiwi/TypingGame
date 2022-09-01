@@ -7,13 +7,13 @@ int main()
 {
     Endpoint endpoint;
     endpoint.ipAddress = "127.0.0.1";
-    endpoint.portNumber = 20000;
+    endpoint.portNumber = 30000;
 
     ServerSocket sock;
     sock.BindAndListen(endpoint);
 
     SendReceiveSocket dataSocket = sock.Accept();
-    std::vector<uint8_t> data = dataSocket.ReceiveData(20);
+    std::vector<uint8_t> data = dataSocket.ReceiveData(15);
 
     std::cout << (char*)data.data() << "\n";
 }
