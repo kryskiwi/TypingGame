@@ -5,3 +5,7 @@ plugins {
 application {
     mainClass = 'GameMain.Test'
 }
+jar {
+    archiveBaseName = 'myjar'
+    archiveVersion =  '0.1.0'
+}
