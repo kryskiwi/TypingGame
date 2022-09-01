@@ -7,7 +7,7 @@ int main()
 {
     Endpoint endpoint;
     endpoint.ipAddress = "127.0.0.1";
-    endpoint.portNumber = 20000;
+    endpoint.portNumber = 30000;
 
     ServerSocket sock;
     sock.BindAndListen(endpoint);
