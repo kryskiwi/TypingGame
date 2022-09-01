@@ -13,7 +13,7 @@ int main()
     sock.BindAndListen(endpoint);
 
     SendReceiveSocket dataSocket = sock.Accept();
-    std::vector<uint8_t> data = dataSocket.ReceiveData(20);
+    std::vector<uint8_t> data = dataSocket.ReceiveData(15);
 
     std::cout << (char*)data.data() << "\n";
 }
