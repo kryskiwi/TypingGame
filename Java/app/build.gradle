@@ -3,7 +3,7 @@ plugins {
 }
 
 application {
-    mainClass = 'GameMain.Test'
+    mainClass = 'GameMain.GameGui'
 }
 // jar {
 //     archiveBaseName = 'myjar'
