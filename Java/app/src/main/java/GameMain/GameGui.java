@@ -35,8 +35,10 @@ public class GameGui{
     final JTextArea textArea = new JTextArea(10, 40);
     textArea.setText(c_str);
     textArea.setBorder(BorderFactory.createCompoundBorder(textArea.getBorder(), BorderFactory.createEmptyBorder(10,10,10,10)));
+    textArea.setEditable(false);
 
     final JTextArea fileArea = new JTextArea("Click the bottommost box to begin typing.");
+    fileArea.setEditable(false);
 
     final JTextArea typeArea = new JTextArea(10,40);
     String default_type_text = "Click here to type.";
