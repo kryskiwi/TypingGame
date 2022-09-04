@@ -15,7 +15,8 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Document;
 import javax.swing.text.Highlighter;
-import javax.swing.text.Highlighter.Highlight;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 public class GameGui{
 
@@ -38,10 +39,15 @@ public class GameGui{
     final JTextArea fileArea = new JTextArea("Click the bottommost box to begin typing.");
 
     final JTextArea typeArea = new JTextArea(10,40);
+    String default_type_text = "Click here to type.";
+    typeArea.setText(default_type_text);
 
     f.getContentPane().add(BorderLayout.PAGE_START, fileArea);
     f.getContentPane().add(BorderLayout.CENTER, textArea);
     f.getContentPane().add(BorderLayout.PAGE_END, typeArea);
+
+    textArea.setBorder(BorderFactory.createMatteBorder(4, 4, 4, 4, Color.BLACK));
+    f.setVisible(true);
 
     // Set up key listener for user input
     KeyListener listen = new KeyListener() {
@@ -60,10 +66,12 @@ public class GameGui{
                 cursor--;
             }
         }
+
         @Override
         public void keyReleased(KeyEvent event) {
             // printEventInfo("Key Released", event);
         }
+
         @Override
         public void keyTyped(KeyEvent event) {
             if (event.getKeyChar() == KeyEvent.VK_BACK_SPACE){
@@ -103,9 +111,22 @@ public class GameGui{
     // Apply key listener to text area in gui
     typeArea.addKeyListener(listen);
 
-    textArea.setBorder(BorderFactory.createMatteBorder(4, 4, 4, 4, Color.BLACK));
-    f.setVisible(true);
+    // Text prompt in field until clicked 
+    FocusListener fl = new FocusListener() {
+        @Override
+        public void focusLost(FocusEvent e) {
+            // typeArea.setText("Click here to type.");
+        }
 
-  }
-
+        @Override
+        public void focusGained(FocusEvent e) {
+            System.out.println(typeArea.getText());
+            if (typeArea.getText().equals(default_type_text)){
+                typeArea.setText("");
+            }
+        };
+    };
+    
+    typeArea.addFocusListener(fl);
+}
 }
