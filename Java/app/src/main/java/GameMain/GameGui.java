@@ -1,6 +1,7 @@
 package GameMain;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -10,6 +11,11 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.Document;
+import javax.swing.text.Highlighter;
+import javax.swing.text.Highlighter.Highlight;
 
 public class GameGui{
 
@@ -26,17 +32,31 @@ public class GameGui{
     
     // Make gui a textbox
     final JTextArea textArea = new JTextArea(10, 40);
+    textArea.setText(c_str);
     textArea.setBorder(BorderFactory.createCompoundBorder(textArea.getBorder(), BorderFactory.createEmptyBorder(10,10,10,10)));
-    textArea.append(c_str);
+
+    final JTextArea fileArea = new JTextArea("Click the bottommost box to begin typing.");
+
+    final JTextArea typeArea = new JTextArea(10,40);
+
+    f.getContentPane().add(BorderLayout.PAGE_START, fileArea);
     f.getContentPane().add(BorderLayout.CENTER, textArea);
-    
+    f.getContentPane().add(BorderLayout.PAGE_END, typeArea);
+
     // Set up key listener for user input
     KeyListener listen = new KeyListener() {
         int cursor = 0;
 
         @Override 
         public void keyPressed(KeyEvent event) {
-            if (event.getKeyCode() == KeyEvent.VK_BACK_SPACE && cursor != 0){
+            printEventInfo("Key Pressed", event);
+            if (event.getKeyCode() == KeyEvent.VK_BACK_SPACE && cursor != 0) {
+                try{
+                    textArea.setText("YOU PRESSED BACKSPACE" + event.getKeyCode());
+                    Highlighter highlighter = textArea.getHighlighter();
+                    highlighter.removeHighlight(highlighter.getHighlights()[cursor]);
+                }
+                catch(Exception e){};
                 cursor--;
             }
         }
@@ -47,33 +67,34 @@ public class GameGui{
         @Override
         public void keyTyped(KeyEvent event) {
             printEventInfo("Key Typed", event);
-            compareKey(event);
+            event.getKeyCode();
+            if (event.getKeyCode() == KeyEvent.VK_BACK_SPACE){
+                textArea.setText("YOU PRESSED BACKSPACE");
+                return;
+            }
+            try {
+                compareKey(event);
+            }
+            catch (Exception e){}
         }
 
-       
-        public void compareKey(KeyEvent key){
-
-           textArea.setText("" + c_str.charAt(cursor) + "\n");
-           char compare_against = c_str.charAt(cursor);
+        public void compareKey(KeyEvent key) throws BadLocationException{
+            char compare_against = c_str.charAt(cursor);
            char pressed_key = key.getKeyChar();
            if (compare_against == pressed_key){
+            textArea.getHighlighter().addHighlight(cursor, cursor+1, new DefaultHighlighter.DefaultHighlightPainter(Color.yellow));
             cursor++;
-            
-            if (cursor == c_str.length() - 1){
-                textArea.setText("You gud at typing");
-                textArea.removeKeyListener(this);
-            }
-
-            textArea.setText("" + c_str.charAt(cursor) + "\n");
            }
            else{
             textArea.append(" WRONG press " + c_str.charAt(cursor) + " correctly to continue \n");
-           }
+            textArea.getHighlighter().addHighlight(cursor, cursor+1, new DefaultHighlighter.DefaultHighlightPainter(Color.RED));
+            cursor++;
+        }
 
         }
 
         public void printEventInfo(String message, KeyEvent key) {
-            textArea.setText("");
+            textArea.setText(" " + key.getKeyCode());
             textArea.append(message + "\n");
             String pressed_key = "" + key.getKeyChar();
             textArea.append(pressed_key + "\n");
@@ -81,8 +102,9 @@ public class GameGui{
     };
 
     // Apply key listener to text area in gui
-    textArea.addKeyListener(listen);
+    typeArea.addKeyListener(listen);
 
+    textArea.setBorder(BorderFactory.createMatteBorder(4, 4, 4, 4, Color.BLACK));
     f.setVisible(true);
 
   }
