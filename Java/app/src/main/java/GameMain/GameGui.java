@@ -49,12 +49,12 @@ public class GameGui{
 
         @Override 
         public void keyPressed(KeyEvent event) {
-            printEventInfo("Key Pressed", event);
+            // printEventInfo("Key Pressed", event);
             if (event.getKeyCode() == KeyEvent.VK_BACK_SPACE && cursor != 0) {
                 try{
-                    textArea.setText("YOU PRESSED BACKSPACE" + event.getKeyCode());
+                    // If we delete a character, unhighlight the character
                     Highlighter highlighter = textArea.getHighlighter();
-                    highlighter.removeHighlight(highlighter.getHighlights()[cursor]);
+                    highlighter.removeHighlight(highlighter.getHighlights()[cursor-1]);
                 }
                 catch(Exception e){};
                 cursor--;
@@ -66,12 +66,10 @@ public class GameGui{
         }
         @Override
         public void keyTyped(KeyEvent event) {
-            printEventInfo("Key Typed", event);
-            event.getKeyCode();
-            if (event.getKeyCode() == KeyEvent.VK_BACK_SPACE){
-                textArea.setText("YOU PRESSED BACKSPACE");
+            if (event.getKeyChar() == KeyEvent.VK_BACK_SPACE){
                 return;
             }
+
             try {
                 compareKey(event);
             }
@@ -80,25 +78,26 @@ public class GameGui{
 
         public void compareKey(KeyEvent key) throws BadLocationException{
             char compare_against = c_str.charAt(cursor);
-           char pressed_key = key.getKeyChar();
-           if (compare_against == pressed_key){
-            textArea.getHighlighter().addHighlight(cursor, cursor+1, new DefaultHighlighter.DefaultHighlightPainter(Color.yellow));
-            cursor++;
-           }
-           else{
-            textArea.append(" WRONG press " + c_str.charAt(cursor) + " correctly to continue \n");
-            textArea.getHighlighter().addHighlight(cursor, cursor+1, new DefaultHighlighter.DefaultHighlightPainter(Color.RED));
-            cursor++;
-        }
+            char pressed_key = key.getKeyChar();
+            if (compare_against == pressed_key){
+                // highlight correct text with green
+                textArea.getHighlighter().addHighlight(cursor, cursor+1, new DefaultHighlighter.DefaultHighlightPainter(Color.GREEN));
+                cursor++;
+            }
+            else{
+                // highlight incorrect text with red
+                textArea.getHighlighter().addHighlight(cursor, cursor+1, new DefaultHighlighter.DefaultHighlightPainter(Color.RED));
+                cursor++;
+            }
 
         }
 
-        public void printEventInfo(String message, KeyEvent key) {
-            textArea.setText(" " + key.getKeyCode());
-            textArea.append(message + "\n");
-            String pressed_key = "" + key.getKeyChar();
-            textArea.append(pressed_key + "\n");
-        }
+        // public void printEventInfo(String message, KeyEvent key) {
+        //     textArea.setText(" " + key.getKeyCode());
+        //     textArea.append(message + "\n");
+        //     String pressed_key = "" + key.getKeyChar();
+        //     textArea.append(pressed_key + "\n");
+        // }
     };
 
     // Apply key listener to text area in gui
