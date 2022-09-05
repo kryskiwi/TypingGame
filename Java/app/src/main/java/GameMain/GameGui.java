@@ -15,6 +15,8 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Document;
 import javax.swing.text.Highlighter;
+import javax.swing.text.Highlighter.Highlight;
+
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
@@ -28,8 +30,6 @@ public class GameGui{
 
     // Comparison array
     String c_str = "Bonkadonk"; 
-    
-    
     
     // Make gui a textbox
     final JTextArea textArea = new JTextArea(10, 40);
@@ -54,6 +54,12 @@ public class GameGui{
     // Set up key listener for user input
     KeyListener listen = new KeyListener() {
         int cursor = 0;
+        int correct = 0;
+        int incorrect = 0;
+        int str_len = c_str.length();
+        DefaultHighlighter.DefaultHighlightPainter correct_painter = new DefaultHighlighter.DefaultHighlightPainter(Color.GREEN);
+        DefaultHighlighter.DefaultHighlightPainter incorrect_painter = new DefaultHighlighter.DefaultHighlightPainter(Color.RED);
+
 
         @Override 
         public void keyPressed(KeyEvent event) {
@@ -62,10 +68,18 @@ public class GameGui{
                 try{
                     // If we delete a character, unhighlight the character
                     Highlighter highlighter = textArea.getHighlighter();
-                    highlighter.removeHighlight(highlighter.getHighlights()[cursor-1]);
+                    Highlight highlight = highlighter.getHighlights()[cursor-1];
+                    if (highlight.getPainter().equals(correct_painter)){
+                        correct--;
+                    }
+                    else{
+                        incorrect--;
+                    }
+                    highlighter.removeHighlight(highlight);
                 }
                 catch(Exception e){};
                 cursor--;
+                calcAccuracy();
             }
         }
 
@@ -82,6 +96,7 @@ public class GameGui{
 
             try {
                 compareKey(event);
+                calcAccuracy();
             }
             catch (Exception e){}
         }
@@ -91,17 +106,23 @@ public class GameGui{
             char pressed_key = key.getKeyChar();
             if (compare_against == pressed_key){
                 // highlight correct text with green
-                textArea.getHighlighter().addHighlight(cursor, cursor+1, new DefaultHighlighter.DefaultHighlightPainter(Color.GREEN));
+                textArea.getHighlighter().addHighlight(cursor, cursor+1, correct_painter);
                 cursor++;
+                correct++;
             }
             else{
                 // highlight incorrect text with red
-                textArea.getHighlighter().addHighlight(cursor, cursor+1, new DefaultHighlighter.DefaultHighlightPainter(Color.RED));
+                textArea.getHighlighter().addHighlight(cursor, cursor+1, incorrect_painter);
                 cursor++;
+                incorrect++;
             }
 
         }
 
+        public void calcAccuracy(){
+            float accuracy = correct*100 / cursor;
+            fileArea.setText("Accuracy: " + String.valueOf(accuracy) + "%");
+        }
         // public void printEventInfo(String message, KeyEvent key) {
         //     textArea.setText(" " + key.getKeyCode());
         //     textArea.append(message + "\n");
