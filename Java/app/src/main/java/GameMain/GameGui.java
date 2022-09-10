@@ -2,15 +2,19 @@ package GameMain;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.awt.event.*;
 
+
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
+import javax.swing.Timer;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Document;
@@ -19,9 +23,10 @@ import javax.swing.text.Highlighter.Highlight;
 
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.text.SimpleDateFormat;
 
 public class GameGui{
-
+  
   public static void main(String[] args) {
     // Create gui popup
     JFrame f = new JFrame("A JFrame");
@@ -37,19 +42,56 @@ public class GameGui{
     textArea.setBorder(BorderFactory.createCompoundBorder(textArea.getBorder(), BorderFactory.createEmptyBorder(10,10,10,10)));
     textArea.setEditable(false);
 
-    final JTextArea fileArea = new JTextArea("Click the bottommost box to begin typing.");
-    fileArea.setEditable(false);
+    final JTextArea statsArea = new JTextArea("Click the bottommost box to begin typing.");
+    statsArea.setEditable(false);
 
     final JTextArea typeArea = new JTextArea(10,40);
     String default_type_text = "Click here to type.";
     typeArea.setText(default_type_text);
 
-    f.getContentPane().add(BorderLayout.PAGE_START, fileArea);
+    final JTextArea game_over = new JTextArea(10, 5);
+    game_over.setText("Game Over");
+    game_over.setEditable(false);
+
+    
+    f.getContentPane().add(BorderLayout.PAGE_START, statsArea);
     f.getContentPane().add(BorderLayout.CENTER, textArea);
     f.getContentPane().add(BorderLayout.PAGE_END, typeArea);
 
     textArea.setBorder(BorderFactory.createMatteBorder(4, 4, 4, 4, Color.BLACK));
+    textArea.setPreferredSize(new Dimension(50,20) );
     f.setVisible(true);
+
+    // Set up timer
+    int delay = 1000; //milliseconds
+    
+
+    final JTextArea timeArea = new JTextArea(5,20);
+    f.getContentPane().add(BorderLayout.LINE_END, timeArea);
+    timeArea.setPreferredSize(new Dimension(1,1));
+    
+
+    Timer timer = new Timer(delay, new ActionListener() {
+        int count = 10;
+        public void actionPerformed(ActionEvent evt) {
+            if (count == 0) {
+                f.remove(textArea);
+                f.getContentPane().add(BorderLayout.PAGE_START, game_over);
+                f.getContentPane().add(BorderLayout.CENTER, statsArea);
+                // f.remove(typeArea);
+            }
+            else{
+                timeArea.setText("" + count);
+                count--;
+            }
+
+            
+            }
+        }
+    );
+    timer.start();
+    
+
 
     // Set up key listener for user input
     KeyListener listen = new KeyListener() {
@@ -97,6 +139,11 @@ public class GameGui{
             try {
                 compareKey(event);
                 calcAccuracy();
+                if (cursor == str_len){
+                    f.getContentPane().removeAll();
+                    f.getContentPane().add(BorderLayout.PAGE_START,game_over);
+                    f.getContentPane().add(BorderLayout.CENTER, statsArea);
+                }
             }
             catch (Exception e){}
         }
@@ -120,8 +167,14 @@ public class GameGui{
         }
 
         public void calcAccuracy(){
-            float accuracy = correct*100 / cursor;
-            fileArea.setText("Accuracy: " + String.valueOf(accuracy) + "%");
+            float accuracy;
+            if (cursor == 0){
+                accuracy = 100;
+            }
+            else{ accuracy = correct*100 / cursor;}
+            String format = "%1$5s %2$-40s %3$-20s";
+            // String stats_line = "Accuracy: " + String.valueOf(accuracy) + "%" + "Timer: " + 
+            statsArea.setText("Accuracy: " + String.valueOf(accuracy) + "%");
         }
         // public void printEventInfo(String message, KeyEvent key) {
         //     textArea.setText(" " + key.getKeyCode());
@@ -131,6 +184,7 @@ public class GameGui{
         // }
     };
 
+    
     // Apply key listener to text area in gui
     typeArea.addKeyListener(listen);
 
@@ -150,6 +204,8 @@ public class GameGui{
         };
     };
     
+    
     typeArea.addFocusListener(fl);
+
 }
 }
